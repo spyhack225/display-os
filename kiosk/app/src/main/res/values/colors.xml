@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="nn_background">#0A0A0B</color>
+    <color name="nn_card">#0D0D0D</color>
+    <color name="nn_foreground">#FFFFFF</color>
+    <color name="nn_muted_foreground">#A6A6A6</color>
+    <color name="nn_border">#333333</color>
+    <color name="nn_accent">#62847E</color>
+</resources>

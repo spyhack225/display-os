@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DisplayOS | Display</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="display">
+<header><a class="brand" href="/">DisplayOS</a><nav><a href="/setup" target="_blank" rel="noopener">Owner setup</a><a href="/agent" target="_blank" rel="noopener">Synthetic agent</a></nav></header>
+<main class="display-main">
+  <div class="eyebrow">Original local demo / synthetic content only</div>
+  <h1>A quiet place for your next thought.</h1>
+  <p id="status" class="status" role="status" aria-live="polite">This is a browser display, not a tested tablet.</p>
+  <section id="enrollment" class="panel">
+    <h2>Start an unclaimed display</h2>
+    <p>Creates a browser session and transport credential. It does not claim ownership or authorize an agent.</p>
+    <form id="enroll-form"><label for="display-name">Display name</label><input id="display-name" maxlength="60" value="Dinner desk" required><button type="submit">Create display session</button></form>
+  </section>
+  <section id="pairing" class="panel" hidden>
+    <h2>Waiting for the owner</h2><p>Open <a href="/setup" target="_blank" rel="noopener">owner setup</a> in another tab or on the same trusted network. Enter both values below and choose Claim display. This is a possession check for the demo, not secure hardware enrollment.</p>
+    <label for="pair-code">Single-use pairing code</label><input id="pair-code" readonly class="code">
+    <label for="pair-session">Pairing session</label><input id="pair-session" readonly class="code">
+    <p id="pair-expiry"></p><button id="renew-pair" type="button">Generate a new pairing code</button>
+  </section>
+  <div class="content-heading"><h2 id="content-heading">Local sample cards</h2><span id="revision" class="badge">Not published</span></div>
+  <section id="cards" class="cards" aria-labelledby="content-heading">
+    <article class="card"><div class="eyebrow">Synthetic sample</div><h3>Make room for one good idea.</h3><p>This card lives in this original browser demo. No personal account, device repair, or cloud service is connected.</p></article>
+    <article class="card accent"><div class="eyebrow">What happens next</div><h3>Claim. Approve. Publish.</h3><p>The owner claims the display, then separately approves a narrow agent grant. Only a client render receipt completes the delivery loop.</p></article>
+  </section>
+  <section id="device-details" class="panel" hidden><label for="device-id">Display ID for the synthetic agent</label><input id="device-id" readonly class="code"><p>IDs are not credentials. Closing this tab can lose its transport identity. Restarting the server clears all display state.</p></section>
+</main><footer>Local HTTP prototype. No arbitrary HTML, shell access, or physical-device testing.</footer>
+<script src="/app.js"></script>
+</body></html>

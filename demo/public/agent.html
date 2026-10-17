@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DisplayOS | Synthetic agent</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="agent">
+<header><a class="brand" href="/">DisplayOS</a><nav><a href="/">Display</a><a href="/setup" target="_blank" rel="noopener">Owner setup</a></nav></header>
+<main class="setup-main"><div class="eyebrow">Synthetic API client / not an AI connector</div><h1>Ask for access. Then send a card.</h1>
+<p class="warning">This page exercises the same authenticated HTTP API an integration could call. It is not ChatGPT, MCP, OAuth, or universal agent support. Tokens stay in this browser tab, never in URLs or visible logs.</p>
+<p id="status" class="status" role="status" aria-live="polite">Claim a display in owner setup first.</p>
+<section class="panel"><h2>Request a scoped grant</h2><form id="request-form">
+<label for="agent-device">Claimed display ID</label><input id="agent-device" maxlength="24" required>
+<label for="agent-label">Self-reported client label</label><input id="agent-label" value="Local synthetic agent" maxlength="60" required>
+<p>Requested scopes: <code>display:read</code> and <code>content:write</code>. Lifetime: 15 minutes after approval. Owner approval must happen in <a href="/setup" target="_blank" rel="noopener">owner setup</a>.</p>
+<button type="submit">Ask owner for these permissions</button></form></section>
+<section id="publish-panel" class="panel" hidden><h2>Publish bounded text</h2><form id="publish-form"><label for="card-title">Title</label><input id="card-title" value="A small signal from the agent" maxlength="80" required>
+<label for="card-text">Synthetic text</label><textarea id="card-text" maxlength="600" required>The remote API accepted this card. The display will poll, update its text nodes, and send a render receipt.</textarea>
+<p>Plain text only. This card expires after 10 minutes. Publishing uses an expected revision and an idempotency key.</p><button type="submit">Publish synthetic card</button></form><p id="publish-status" role="status" aria-live="polite"></p></section>
+</main><footer>Revocation blocks future reads and writes. It does not erase content already accepted.</footer><script src="/app.js"></script>
+</body></html>

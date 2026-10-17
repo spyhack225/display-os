@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>DisplayOS | Owner setup</title><link rel="stylesheet" href="/style.css"></head>
+<body data-page="setup">
+<header><a class="brand" href="/">DisplayOS</a><nav><a href="/">Display</a><a href="/agent">Synthetic agent</a></nav></header>
+<main class="setup-main"><div class="eyebrow">Owner controls</div><h1>You decide what gets access.</h1>
+<p class="warning">Synthetic content only. Local HTTP is not safe for public deployment or personal accounts. On a LAN, all credentials travel in cleartext. Never share the owner credential with an agent.</p>
+<p id="status" class="status" role="status" aria-live="polite">Log in locally to claim and approve.</p>
+<section id="login-panel" class="panel"><h2>1. Owner login</h2><p>Read <code>%LOCALAPPDATA%\DisplayOS\owner-credential.txt</code> privately on the Windows server computer. Other systems use <code>.runtime/owner-credential.txt</code>. An explicit runtime override changes this location. The service logs the path, never the credential. There is no account registration.</p>
+<form id="login-form"><label for="owner-credential">Service-local owner credential</label><input id="owner-credential" type="password" autocomplete="off" maxlength="64" required><button type="submit">Log in as local owner</button></form></section>
+<div id="owner-controls" hidden>
+<section class="panel"><h2>2. Claim one display</h2><p>Copy the code and pairing session from the display you intend to own. Claiming never grants agent access.</p>
+<form id="claim-form"><label for="claim-code">Pairing code</label><input id="claim-code" maxlength="12" autocomplete="off" required><label for="claim-session">Pairing session</label><input id="claim-session" maxlength="32" autocomplete="off" required><button type="submit">Claim this display deliberately</button></form></section>
+<section class="panel"><h2>3. Review agent requests</h2><p>Agent labels are self-reported. Review the exact display ID, permissions, and lifetime. This is a local grant, not OAuth or a verified AI identity.</p><div id="requests"></div></section>
+<section class="panel"><h2>Your displays and delivery receipts</h2><div id="devices"></div></section>
+<section class="panel"><h2>Approved grants</h2><div id="grants"></div></section>
+<button id="logout" type="button" class="secondary">Log out</button>
+</div></main><footer>Claiming and agent approval are separate owner actions. No silent authorization.</footer><script src="/app.js"></script>
+</body></html>

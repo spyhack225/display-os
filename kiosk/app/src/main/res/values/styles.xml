@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DisplayOSTheme" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/nn_background</item>
+        <item name="android:colorBackground">@color/nn_card</item>
+        <item name="android:colorAccent">@color/nn_accent</item>
+        <item name="android:textColorPrimary">@color/nn_foreground</item>
+        <item name="android:textColorSecondary">@color/nn_muted_foreground</item>
+        <item name="android:statusBarColor">@color/nn_background</item>
+        <item name="android:navigationBarColor">@color/nn_background</item>
+    </style>
+</resources>

@@ -1,0 +1,135 @@
+/*
+  My home layout: a card grid that grows from one to three columns, and a
+  single narrow column for sign-in, recovery, first home and invitations.
+  Tokens come from design-system.css.
+*/
+.owner .brandbar, .owner .owner-footer { max-width: none; padding-left: var(--page-padding); padding-right: var(--page-padding); }
+
+.owner .home-shell {
+  width: 100%;
+  max-width: none;
+  margin: var(--space-16) 0 var(--space-48);
+  padding: 0 var(--page-padding);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-gap: var(--space-24);
+  align-items: start;
+}
+.home-shell > * { min-width: 0; }
+.home-shell > p, .home-shell > h1, .home-shell > .progress, .home-shell > .field, .home-shell > .actions, .home-shell > .home-intro { grid-column: 1 / -1; }
+.home-shell > p, .home-shell > h1 { margin: 0; }
+.home-shell > .lead { max-width: 68ch; }
+.home-shell > .sheet, .home-shell > details { margin: 0; }
+.home-shell .field, .home-shell .invitation-copy { width: 100%; max-width: 600px; }
+.home-shell textarea { max-width: 100%; }
+.home-shell > h1 { font-size: 48px; letter-spacing: var(--tracking-section); line-height: var(--leading-headline); }
+
+/* Narrow single-column views */
+.home-shell[data-view=signin], .home-shell[data-view=recovered], .home-shell[data-view=create], .home-shell[data-view=invited] { max-width: 640px; margin-left: auto; margin-right: auto; }
+
+/* Intro */
+.home-intro { padding: var(--space-24) 0 var(--space-8); }
+.home-intro h1 { margin: 6px 0 var(--space-16); font-size: 56px; line-height: var(--leading-display); letter-spacing: var(--tracking-display); font-weight: 600; overflow-wrap: anywhere; }
+.home-intro .lead { max-width: 52ch; margin: 0; }
+.home-count { display: inline-block; margin: var(--space-24) 0 0; padding: 6px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--glass-fill-card); font-size: 13px; font-weight: 600; letter-spacing: var(--tracking-title); color: var(--secondary-foreground); }
+
+/* Cards */
+.home-shell > .home-primary { padding: 26px; }
+.home-primary h2 { margin: 0 0 var(--space-16); font-size: 26px; }
+.home-primary .muted, .home-primary .source-note { font-size: 14px; line-height: 1.55; }
+.home-shell > details {
+  position: relative;
+  padding: 6px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-glass);
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+@supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .home-shell > details { background: var(--glass-fill-card); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); }
+}
+.home-shell > details > summary { padding-top: 14px; padding-bottom: 14px; font-size: 17px; line-height: 1.5; }
+.home-shell > details[open] { padding-bottom: 24px; }
+.home-shell > details[open] > summary { margin-bottom: var(--space-8); }
+.home-shell > details > p { color: var(--secondary-foreground); }
+.home-shell > details.home-sources > summary { font-size: 22px; letter-spacing: var(--tracking-headline); }
+.home-shell > details.home-primary { padding: 8px 26px; }
+
+/* Screens */
+.screen-card {
+  margin: var(--space-16) 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sheet);
+  background: var(--glass-fill-card);
+}
+.screen-card-heading { display: flex; align-items: center; min-width: 0; }
+.screen-card-heading > * + * { margin-left: 14px; }
+.screen-card-heading h3 { margin: 0 0 4px; font-size: 20px; line-height: 1.3; overflow-wrap: anywhere; }
+.screen-label { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: var(--tracking-caption); text-transform: uppercase; color: var(--muted-foreground); }
+.screen-symbol {
+  display: block;
+  flex: none;
+  position: relative;
+  width: 48px;
+  height: 34px;
+  border: 2px solid var(--foreground);
+  border-radius: var(--radius-control);
+  background-color: var(--card);
+  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
+  background-size: 8px 8px;
+}
+.screen-rename .field { margin: 15px 0 12px; }
+.screen-rename .button, .screen-voice-agent .button { min-height: var(--touch); padding: 10px 18px; font-size: 14px; }
+.screen-voice-agent .field { margin: 15px 0 12px; }
+.screen-lists-toggle { margin: 6px 0 0; }
+.screen-lists-toggle .muted { margin: 0 0 0 36px; }
+.screen-card > .button { margin-top: 12px; }
+.screen-card > .button.secondary { min-height: var(--touch); padding: 8px 16px; border-color: var(--border); font-size: 14px; color: var(--secondary-foreground); }
+.list-item-row { display: flex; align-items: center; margin: 10px 0; }
+.list-item-row > * + * { margin-left: 12px; }
+.list-item-row .checkbox { flex: 1; margin: 0; }
+.list-item-row .button { flex: none; margin: 0; }
+.list-add { margin-top: 6px; }
+.lists-catalog .list-row h3 { overflow-wrap: anywhere; }
+
+/* Location actions inside Things to bring home */
+.source-location .location-primary-actions, .source-location .location-secondary-actions, .source-location .location-preview-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-gap: 12px;
+  min-width: 0;
+  margin-top: 20px;
+}
+.source-location .location-secondary-actions { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.source-location .location-primary-actions .button, .source-location .location-secondary-actions .button, .source-location .location-preview-actions .button {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+}
+
+@media (min-width: 760px) {
+  .owner .brandbar, .owner .owner-footer { padding-left: var(--space-24); padding-right: var(--space-24); }
+  .owner .home-shell { padding: 0 var(--space-24); grid-template-columns: repeat(2, minmax(0, 1fr)); grid-gap: var(--space-24); }
+  .home-shell[data-view=signin], .home-shell[data-view=recovered], .home-shell[data-view=create], .home-shell[data-view=invited] { grid-template-columns: minmax(0, 1fr); }
+  .home-intro h1 { font-size: 64px; }
+}
+@media (min-width: 1200px) {
+  .owner .brandbar, .owner .owner-footer { padding-left: var(--space-32); padding-right: var(--space-32); }
+  .owner .home-shell { padding: 0 var(--space-32); grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .home-shell[data-view=signin], .home-shell[data-view=recovered], .home-shell[data-view=create], .home-shell[data-view=invited] { grid-template-columns: minmax(0, 1fr); }
+  .home-intro h1 { font-size: 72px; }
+}
+@media (max-width: 540px) {
+  .home-intro h1 { font-size: 44px; letter-spacing: -1.5px; }
+  .home-shell > h1 { font-size: 38px; }
+  .home-shell > .home-primary { padding: var(--space-16) var(--space-16) var(--space-24); }
+  .home-shell > details { padding: 4px 16px; }
+  .home-shell > details.home-primary { padding: 6px 16px; }
+}
+@media (forced-colors: active) {
+  .home-shell > details, .screen-card, .home-count, .screen-symbol { border-color: CanvasText; }
+}

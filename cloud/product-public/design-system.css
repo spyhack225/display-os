@@ -1,0 +1,683 @@
+/*
+  DisplayOS design system.
+  Tokens, themes, base elements and shared components. Loaded first on every
+  product page and on the retained pilot pages. Page layouts live in style.css,
+  details.css, home-layout.css and pairing.css and only use the tokens below.
+
+  The tablet WebView is Chrome 70. Rules here avoid min(), max(), clamp(), flex
+  gap, aspect-ratio, :is(), :where(), the inset shorthand, logical properties
+  and mask-composite. Newer features sit inside @supports blocks. Never join an
+  old selector and a new selector in one rule list, because one unknown
+  selector discards the whole rule.
+*/
+
+/* ---------------------------------------------------------------- tokens */
+:root {
+  /* Type */
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --tracking-display: -2px;
+  --tracking-section: -1.5px;
+  --tracking-headline: -1px;
+  --tracking-title: -0.01em;
+  --tracking-eyebrow: 3px;
+  --tracking-caption: 0.14em;
+  --text-eyebrow: 11px;
+  --text-caption: 13px;
+  --text-body: 16px;
+  --text-title: 20px;
+  --text-headline: 32px;
+  --text-section: 48px;
+  --text-display: 72px;
+  --leading-display: 1.03;
+  --leading-headline: 1.1;
+  --leading-body: 1.5;
+
+  /* Space, 4pt grid */
+  --space-2: 2px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --page-padding: 20px;
+  --section-gap: 28px;
+  --card-padding: 14px;
+  --touch: 44px;
+
+  /* Radii */
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-sheet: 14px;
+  --radius-field: 12px;
+  --radius-glass: 16px;
+  --radius-hud: 22px;
+  --radius-pill: 999px;
+
+  /* Motion */
+  --dur-hover: 0.14s;
+  --dur-standard: 0.2s;
+  --dur-emphasis: 0.3s;
+  --dur-spring: 0.45s;
+  --ease-hover: ease-out;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.5, 1);
+
+  /* Glass */
+  --glass-blur: 12px;
+  --glass-blur-soft: 4px;
+
+  /* Dark is the default theme, so a WebView without prefers-color-scheme
+     support, such as the tablet, renders dark. */
+  color-scheme: dark;
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 5%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(0, 0%, 12%);
+  --secondary-foreground: hsl(0, 0%, 85%);
+  --muted: hsl(0, 0%, 15%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --accent: hsl(170, 15%, 45%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --accent-text: hsl(170, 22%, 68%);
+  --accent-soft: hsla(170, 15%, 45%, 0.2);
+  --accent-line: hsla(170, 22%, 68%, 0.45);
+  --primary: hsl(0, 0%, 100%);
+  --primary-foreground: hsl(0, 0%, 4%);
+  --border: hsl(0, 0%, 20%);
+  --border-strong: hsl(0, 0%, 40%);
+  --input: hsl(0, 0%, 18%);
+  --field: hsl(0, 0%, 7%);
+  --ring: hsl(0, 0%, 40%);
+  --ring-halo: hsla(0, 0%, 100%, 0.18);
+  --focus: hsl(0, 0%, 82%);
+  --success: hsl(142, 46%, 56%);
+  --warning: hsl(32, 92%, 60%);
+  --danger: hsl(0, 78%, 68%);
+  --danger-solid: hsl(0, 62%, 40%);
+  --info: hsl(210, 78%, 70%);
+  --glass-fill: hsla(0, 0%, 100%, 0.01);
+  --glass-fill-card: hsla(0, 0%, 100%, 0.045);
+  --glass-fill-strong: hsla(0, 0%, 100%, 0.09);
+  --glass-opaque: hsl(0, 0%, 7%);
+  --glass-rim: hsla(0, 0%, 100%, 0.2);
+  --glass-rim-top: hsla(0, 0%, 100%, 0.42);
+  --glass-highlight: hsla(0, 0%, 100%, 0.14);
+  --scrim: rgba(0, 0, 0, 0.72);
+  --dot: hsla(0, 0%, 100%, 0.13);
+  --orb: hsla(170, 15%, 45%, 0.14);
+  --night-foreground: hsl(170, 8%, 54%);
+  --night-muted: hsl(170, 6%, 50%);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-raised: 0 4px 14px rgba(0, 0, 0, 0.16);
+  --shadow-hud: 0 8px 18px rgba(0, 0, 0, 0.28);
+
+  /* Role aliases, named by what they do and not by how they look. */
+  --text: var(--foreground);
+  --text-secondary: var(--secondary-foreground);
+  --text-tertiary: var(--muted-foreground);
+  --surface: var(--card);
+  --content: var(--background);
+  --grouped: var(--secondary);
+  --separator: var(--border);
+  --selection: var(--accent-soft);
+  --record: var(--danger);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.dark) {
+    color-scheme: light;
+    --background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 4%);
+    --card: hsl(0, 0%, 97%);
+    --card-foreground: hsl(0, 0%, 4%);
+    --secondary: hsl(0, 0%, 92%);
+    --secondary-foreground: hsl(0, 0%, 25%);
+    --muted: hsl(0, 0%, 94%);
+    --muted-foreground: hsl(0, 0%, 40%);
+    --accent: hsl(170, 20%, 32%);
+    --accent-foreground: hsl(0, 0%, 100%);
+    --accent-text: hsl(170, 22%, 28%);
+    --accent-soft: hsla(170, 20%, 32%, 0.1);
+    --accent-line: hsla(170, 20%, 32%, 0.4);
+    --primary: hsl(0, 0%, 4%);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --border: hsl(0, 0%, 86%);
+    --border-strong: hsl(0, 0%, 50%);
+    --input: hsl(0, 0%, 84%);
+    --field: hsl(0, 0%, 100%);
+    --ring: hsl(0, 0%, 60%);
+    --ring-halo: hsla(0, 0%, 0%, 0.14);
+    --focus: hsl(0, 0%, 22%);
+    --success: hsl(142, 62%, 24%);
+    --warning: hsl(26, 92%, 29%);
+    --danger: hsl(0, 68%, 40%);
+    --danger-solid: hsl(0, 66%, 40%);
+    --info: hsl(212, 72%, 36%);
+    --glass-fill: hsla(0, 0%, 0%, 0.02);
+    --glass-fill-card: hsla(0, 0%, 0%, 0.025);
+    --glass-fill-strong: hsla(0, 0%, 0%, 0.06);
+    --glass-opaque: hsl(0, 0%, 97%);
+    --glass-rim: hsla(0, 0%, 0%, 0.14);
+    --glass-rim-top: hsla(0, 0%, 100%, 0.9);
+    --glass-highlight: hsla(0, 0%, 100%, 0.8);
+    --scrim: rgba(255, 255, 255, 0.78);
+    --dot: hsla(0, 0%, 0%, 0.1);
+    --orb: hsla(170, 20%, 32%, 0.12);
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-raised: 0 4px 14px rgba(0, 0, 0, 0.1);
+    --shadow-hud: 0 8px 18px rgba(0, 0, 0, 0.16);
+  }
+}
+
+:root.light {
+  color-scheme: light;
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(0, 0%, 4%);
+  --card: hsl(0, 0%, 97%);
+  --card-foreground: hsl(0, 0%, 4%);
+  --secondary: hsl(0, 0%, 92%);
+  --secondary-foreground: hsl(0, 0%, 25%);
+  --muted: hsl(0, 0%, 94%);
+  --muted-foreground: hsl(0, 0%, 40%);
+  --accent: hsl(170, 20%, 32%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --accent-text: hsl(170, 22%, 28%);
+  --accent-soft: hsla(170, 20%, 32%, 0.1);
+  --accent-line: hsla(170, 20%, 32%, 0.4);
+  --primary: hsl(0, 0%, 4%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --border: hsl(0, 0%, 86%);
+  --border-strong: hsl(0, 0%, 50%);
+  --input: hsl(0, 0%, 84%);
+  --field: hsl(0, 0%, 100%);
+  --ring: hsl(0, 0%, 60%);
+  --ring-halo: hsla(0, 0%, 0%, 0.14);
+  --focus: hsl(0, 0%, 22%);
+  --success: hsl(142, 62%, 24%);
+  --warning: hsl(26, 92%, 29%);
+  --danger: hsl(0, 68%, 40%);
+  --danger-solid: hsl(0, 66%, 40%);
+  --info: hsl(212, 72%, 36%);
+  --glass-fill: hsla(0, 0%, 0%, 0.02);
+  --glass-fill-card: hsla(0, 0%, 0%, 0.025);
+  --glass-fill-strong: hsla(0, 0%, 0%, 0.06);
+  --glass-opaque: hsl(0, 0%, 97%);
+  --glass-rim: hsla(0, 0%, 0%, 0.14);
+  --glass-rim-top: hsla(0, 0%, 100%, 0.9);
+  --glass-highlight: hsla(0, 0%, 100%, 0.8);
+  --scrim: rgba(255, 255, 255, 0.78);
+  --dot: hsla(0, 0%, 0%, 0.1);
+  --orb: hsla(170, 20%, 32%, 0.12);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-raised: 0 4px 14px rgba(0, 0, 0, 0.1);
+  --shadow-hud: 0 8px 18px rgba(0, 0, 0, 0.16);
+}
+
+/* The wall display stays dark unless someone chose the light theme, and the
+   night view is always dark so it never glares in a bedroom. */
+html:not(.light) body.display,
+body.display.night {
+  color-scheme: dark;
+  --background: hsl(0, 0%, 0%);
+  --foreground: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 5%);
+  --card-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(0, 0%, 12%);
+  --secondary-foreground: hsl(0, 0%, 85%);
+  --muted: hsl(0, 0%, 15%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --accent: hsl(170, 15%, 45%);
+  --accent-foreground: hsl(0, 0%, 100%);
+  --accent-text: hsl(170, 22%, 68%);
+  --accent-soft: hsla(170, 15%, 45%, 0.2);
+  --accent-line: hsla(170, 22%, 68%, 0.45);
+  --primary: hsl(0, 0%, 100%);
+  --primary-foreground: hsl(0, 0%, 4%);
+  --border: hsl(0, 0%, 20%);
+  --border-strong: hsl(0, 0%, 40%);
+  --input: hsl(0, 0%, 18%);
+  --field: hsl(0, 0%, 7%);
+  --ring: hsl(0, 0%, 40%);
+  --ring-halo: hsla(0, 0%, 100%, 0.18);
+  --focus: hsl(0, 0%, 82%);
+  --success: hsl(142, 46%, 56%);
+  --warning: hsl(32, 92%, 60%);
+  --danger: hsl(0, 78%, 68%);
+  --danger-solid: hsl(0, 62%, 40%);
+  --info: hsl(210, 78%, 70%);
+  --glass-fill: hsla(0, 0%, 100%, 0.01);
+  --glass-fill-card: hsla(0, 0%, 100%, 0.045);
+  --glass-fill-strong: hsla(0, 0%, 100%, 0.09);
+  --glass-opaque: hsl(0, 0%, 7%);
+  --glass-rim: hsla(0, 0%, 100%, 0.2);
+  --glass-rim-top: hsla(0, 0%, 100%, 0.42);
+  --glass-highlight: hsla(0, 0%, 100%, 0.14);
+  --scrim: rgba(0, 0, 0, 0.72);
+  --dot: hsla(0, 0%, 100%, 0.13);
+  --orb: hsla(170, 15%, 45%, 0.14);
+  --night-foreground: hsl(170, 8%, 54%);
+  --night-muted: hsl(170, 6%, 50%);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-raised: 0 4px 14px rgba(0, 0, 0, 0.16);
+  --shadow-hud: 0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+/* ------------------------------------------------------------------ base */
+* { box-sizing: border-box; }
+html {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: var(--leading-body);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  position: relative;
+  overflow-wrap: break-word;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button, a, input, select, summary, label { touch-action: manipulation; }
+[hidden] { display: none !important; }
+img, svg { max-width: 100%; }
+hr { border: 0; border-top: 1px solid var(--border); margin: var(--space-24) 0; }
+::selection { background: var(--accent-soft); color: var(--foreground); }
+
+a { color: var(--foreground); text-decoration-color: var(--accent-line); text-underline-offset: 4px; }
+a:hover { text-decoration-color: var(--foreground); }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 600; letter-spacing: var(--tracking-title); color: var(--foreground); }
+h1 { font-size: var(--text-section); line-height: var(--leading-headline); letter-spacing: var(--tracking-section); }
+h2 { font-size: 26px; line-height: 1.2; letter-spacing: var(--tracking-headline); }
+h3 { font-size: var(--text-title); line-height: 1.3; }
+p { margin: 0 0 var(--space-12); }
+
+/* Focus. The first rule keeps a visible ring in WebViews that do not know
+   :focus-visible, because they drop the second rule. Newer browsers show the
+   ring for keyboard focus and hide it for pointer clicks. */
+:focus { outline: 2px solid var(--focus); outline-offset: 3px; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; box-shadow: 0 0 0 6px var(--ring-halo); }
+input:focus, select:focus, textarea:focus { border-color: var(--focus); }
+
+/* Type roles */
+.eyebrow {
+  margin: 0 0 var(--space-12);
+  font-size: var(--text-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  line-height: 1.4;
+  color: var(--accent-text);
+}
+.lead { font-size: 20px; line-height: 1.5; color: var(--secondary-foreground); letter-spacing: var(--tracking-title); }
+.muted { color: var(--muted-foreground); }
+.caption { font-size: var(--text-caption); letter-spacing: 0.01em; color: var(--muted-foreground); }
+.caption-caps { font-size: 12px; font-weight: 600; letter-spacing: var(--tracking-caption); text-transform: uppercase; color: var(--muted-foreground); }
+.display-serif { font-family: var(--font-display); font-weight: 400; font-style: italic; letter-spacing: -0.02em; color: var(--accent-text); }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ----------------------------------------------------- decorative field */
+/* A quiet dot lattice and a soft orb behind everything. Decoration only. */
+body.owner::before,
+body.display::before,
+body[data-page]::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(ellipse at 50% -10%, var(--orb), transparent 62%), radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
+  background-size: 100% 100%, 24px 24px;
+  background-repeat: no-repeat, repeat;
+}
+body.display::before { opacity: 0.75; }
+body.night::before { opacity: 0.12; }
+.dotted-field {
+  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+}
+.orb { background-image: radial-gradient(ellipse at 50% 40%, var(--orb), transparent 65%); }
+
+/* ----------------------------------------------------------------- glass */
+/* Fallback first: an opaque surface with a hairline border. */
+.glass {
+  position: relative;
+  background: var(--glass-opaque);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-glass);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-card);
+}
+@supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .glass {
+    background: var(--glass-fill-card);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  }
+  .glass-soft {
+    background: var(--glass-fill);
+    -webkit-backdrop-filter: blur(var(--glass-blur-soft));
+    backdrop-filter: blur(var(--glass-blur-soft));
+  }
+}
+/* The luminous rim is drawn only by engines that understand the standard
+   mask-composite. Everything else keeps the plain border above. */
+@supports (mask-composite: exclude) {
+  .glass { border-color: transparent; }
+  .glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(160deg, var(--glass-rim-top), var(--glass-rim) 28%, var(--glass-rim) 72%, var(--glass-rim-top));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* --------------------------------------------------------------- buttons */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  min-width: var(--touch);
+  padding: 12px 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-title);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  -webkit-user-select: none;
+  user-select: none;
+  transition: transform var(--dur-spring) var(--ease-spring), background-color var(--dur-hover) var(--ease-hover), border-color var(--dur-hover) var(--ease-hover), opacity var(--dur-hover) var(--ease-hover);
+}
+.button:hover { opacity: 0.88; }
+.button:active { transform: scale(0.97); }
+.button.secondary {
+  background: var(--glass-fill-card);
+  color: var(--foreground);
+  border-color: var(--border-strong);
+  box-shadow: none;
+}
+.button.secondary:hover { opacity: 1; background: var(--secondary); border-color: var(--foreground); }
+.button.danger { background: var(--danger-solid); color: hsl(0, 0%, 100%); }
+.button:disabled { cursor: wait; opacity: 0.55; transform: none; }
+.actions { display: flex; flex-wrap: wrap; margin: var(--space-16) 0 0; }
+.actions > * { margin: 0 var(--space-8) var(--space-8) 0; }
+
+/* ----------------------------------------------------------------- forms */
+.field { display: block; margin: var(--space-16) 0; }
+.field > span:first-child {
+  display: block;
+  margin-bottom: var(--space-8);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-title);
+  color: var(--foreground);
+}
+.field input,
+.field select,
+.field textarea,
+.invitation-copy {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-field);
+  background: var(--field);
+  color: var(--foreground);
+  font-size: 16px;
+  line-height: 1.4;
+  transition: border-color var(--dur-hover) var(--ease-hover);
+}
+.field input::placeholder { color: var(--muted-foreground); opacity: 1; }
+.field input:disabled, .field select:disabled { opacity: 0.6; }
+.field input[readonly] { background: var(--muted); color: var(--secondary-foreground); }
+.field select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 44px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+}
+.field select option { background: var(--card); color: var(--foreground); }
+.invitation-copy { resize: vertical; min-height: 120px; }
+.field input[type=range] { min-height: 44px; padding: 0; background: transparent; border: 0; accent-color: var(--accent); }
+.field input[type=time], .field input[type=number] { font-variant-numeric: tabular-nums; }
+
+/* Checkboxes get a drawn tick, so state never depends on color alone. */
+.checkbox, .list-edit-label {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch);
+  margin: var(--space-8) 0;
+  cursor: pointer;
+}
+.checkbox > * + * { margin-left: var(--space-12); }
+input[type=checkbox] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-control);
+  background: var(--field);
+  cursor: pointer;
+  transition: background-color var(--dur-hover) var(--ease-hover), border-color var(--dur-hover) var(--ease-hover);
+}
+input[type=checkbox]:checked { background: var(--accent); border-color: var(--accent); }
+input[type=checkbox]:checked::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 2px;
+  width: 6px;
+  height: 12px;
+  border: solid var(--accent-foreground);
+  border-width: 0 2.5px 2.5px 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+input[type=checkbox]:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------------------------------------------------------------- surfaces */
+.sheet {
+  position: relative;
+  margin: var(--space-24) 0;
+  padding: var(--space-24);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-glass);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-card);
+}
+.sheet > h2 { margin: 0 0 var(--space-12); font-size: 26px; letter-spacing: var(--tracking-headline); }
+.sheet > h3 { margin: var(--space-16) 0 var(--space-8); }
+.sheet p:last-child { margin-bottom: 0; }
+.sheet p { color: var(--secondary-foreground); }
+.sheet .muted { color: var(--muted-foreground); }
+@supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .sheet {
+    background: var(--glass-fill-card);
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    backdrop-filter: blur(var(--glass-blur));
+  }
+}
+@supports (mask-composite: exclude) {
+  .sheet { border-color: transparent; }
+  .sheet::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(160deg, var(--glass-rim-top), var(--glass-rim) 28%, var(--glass-rim) 72%, var(--glass-rim-top));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+.list-row { padding: var(--space-16) 0; border-bottom: 1px solid var(--border); }
+.list-row:last-child { border-bottom: 0; }
+.list-row h3 { margin: 0 0 var(--space-4); font-size: 18px; }
+.list-row p { margin: var(--space-4) 0; color: var(--muted-foreground); }
+
+/* Chips and notes */
+.status-pill, .badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.flow-note {
+  margin: var(--space-16) 0;
+  padding: var(--space-12) var(--space-16);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-field) var(--radius-field) 0;
+  background: var(--accent-soft);
+  color: var(--foreground) !important;
+}
+.danger-note { color: var(--danger); }
+.phrase { margin: var(--space-16) 0; font-size: 30px; font-weight: 600; letter-spacing: var(--tracking-headline); color: var(--foreground) !important; }
+.safety-codes { font-family: var(--font-mono); font-size: 18px; line-height: 2; word-break: break-all; color: var(--foreground); }
+.signin-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-glass);
+  background-color: var(--card);
+  background-image: radial-gradient(circle at 1px 1px, var(--dot) 1px, transparent 1.6px), radial-gradient(ellipse at 50% 50%, var(--orb), transparent 70%);
+  background-size: 24px 24px, 100% 100%;
+  font-size: 56px;
+  color: var(--accent-text);
+}
+.section-divider { margin: var(--space-24) 0; border: 0; border-top: 1px solid var(--border); }
+
+/* Disclosure rows */
+details { margin-top: var(--space-16); }
+summary {
+  position: relative;
+  display: block;
+  min-height: var(--touch);
+  padding: 10px 44px 10px 0;
+  font-weight: 600;
+  letter-spacing: var(--tracking-title);
+  cursor: pointer;
+  list-style: none;
+}
+summary::-webkit-details-marker { display: none; }
+summary::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  margin-top: -14px;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 25px;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+details[open] > summary::after { content: "\2212"; }
+
+/* Theme toggle. theme.js reveals it, so it never shows without a handler. */
+.theme-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.theme-ready .theme-toggle { display: inline-flex; }
+.theme-toggle:hover { background: var(--secondary); }
+.theme-toggle span {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+}
+
+/* ------------------------------------------------------- larger displays */
+@supports (font-size: clamp(1px, 2vw, 3px)) {
+  h1 { font-size: clamp(34px, 5vw, 56px); }
+}
+
+/* ------------------------------------------------------ user preferences */
+@media (prefers-reduced-motion: reduce) {
+  :root { --dur-hover: 0.01ms; --dur-standard: 0.01ms; --dur-emphasis: 0.01ms; --dur-spring: 0.01ms; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass, .glass-soft, .sheet { background: var(--glass-opaque); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (prefers-contrast: more) {
+  :root { --border: hsl(0, 0%, 45%); }
+  .muted, .caption { color: var(--secondary-foreground); }
+}
+@media (forced-colors: active) {
+  .button, .sheet, .glass, .status-pill, .badge, .theme-toggle { border: 1px solid CanvasText; }
+  input[type=checkbox]:checked { background: Highlight; border-color: Highlight; }
+  input[type=checkbox]:checked::after { border-color: HighlightText; }
+  :focus-visible { outline-color: Highlight; box-shadow: none; }
+  body.owner::before, body.display::before, body[data-page]::before { display: none; }
+}

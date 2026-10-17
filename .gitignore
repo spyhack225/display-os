@@ -1,0 +1,15 @@
+firmware/
+diagnostics/
+.audit/
+tools/samloader-*/
+tools/heimdall-*/
+tools/zadig-*/
+tools/platform-tools/
+tools/*.zip
+WhatsApp Image*.jpeg
+cloud/node_modules/
+cloud/dist/
+cloud/.wrangler/
+cloud/.dev.vars*
+cloud/.env*
+cloud/wrangler.json

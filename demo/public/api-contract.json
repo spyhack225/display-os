@@ -1,0 +1,84 @@
+{
+  "contractVersion": 1,
+  "service": "local-display-demo",
+  "format": "demo HTTP manifest with JSON Schema payloads, not OpenAPI or OAuth",
+  "defaultOrigin": "http://127.0.0.1:8765",
+  "syntheticContentOnly": true,
+  "qrImplemented": false,
+  "headers": {
+    "allPost": { "Content-Type": "application/json", "X-Demo-Request": "1" },
+    "ownerPost": { "X-CSRF-Token": "token from owner login or owner state" },
+    "authenticatedBearer": { "Authorization": "Bearer <role-specific 64 character lowercase hex secret>" },
+    "publish": { "Idempotency-Key": "^[A-Za-z0-9_-]{8,80}$" }
+  },
+  "authentication": {
+    "owner": "Service-local credential establishes HttpOnly SameSite=Strict cookie demo_owner, Path=/api/owner, with CSRF protection. One local owner, no accounts or OAuth.",
+    "device": "Unique per-browser-display transport bearer, never usable as an agent grant.",
+    "request": "Pending agent request bearer, grants no device access. Approval delivers a separate grant bearer through request status.",
+    "grant": "Owner-approved bearer bound to exactly one device and the approved scopes. Expires and can be revoked."
+  },
+  "limits": {
+    "bodyBytes": 8192,
+    "pairingSeconds": 120,
+    "requestSeconds": 300,
+    "ownerSessionSeconds": 3600,
+    "maxGrantSeconds": 3600,
+    "maxContentSeconds": 86400,
+    "maxDevices": 32,
+    "maxAgentRequests": 128,
+    "maxRevisionsPerDevice": 100,
+    "requestsPerClientPerMinute": 600,
+    "ownerLoginAttemptsPerMinute": 10,
+    "claimAttemptsPerMinute": 10,
+    "enrollmentsPerMinute": 10,
+    "agentRequestsPerMinute": 20
+  },
+  "schemas": {
+    "enroll": { "type": "object", "additionalProperties": false, "required": ["name"], "properties": { "name": { "type": "string", "minLength": 1, "maxLength": 60 } } },
+    "ownerLogin": { "type": "object", "required": ["credential"], "properties": { "credential": { "type": "string", "pattern": "^[a-f0-9]{64}$" } } },
+    "claim": { "type": "object", "additionalProperties": false, "required": ["code", "sessionId"], "properties": { "code": { "type": "string", "pattern": "^[a-fA-F0-9]{12}$" }, "sessionId": { "type": "string", "pattern": "^[a-f0-9]{32}$" } } },
+    "agentRequest": {
+      "type": "object", "additionalProperties": false, "required": ["deviceId", "label", "scopes", "ttlSeconds"],
+      "properties": {
+        "deviceId": { "type": "string", "pattern": "^[a-f0-9]{24}$" },
+        "label": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "scopes": { "type": "array", "minItems": 1, "maxItems": 2, "uniqueItems": true, "items": { "enum": ["display:read", "content:write"] } },
+        "ttlSeconds": { "type": "integer", "minimum": 1, "maximum": 3600 }
+      }
+    },
+    "approve": { "type": "object", "additionalProperties": false, "required": ["approved"], "properties": { "approved": { "const": true } } },
+    "publish": {
+      "type": "object", "additionalProperties": false, "required": ["expectedRevision", "ttlSeconds", "cards"],
+      "properties": {
+        "expectedRevision": { "type": "integer", "minimum": 0 },
+        "ttlSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+        "cards": {
+          "type": "array", "minItems": 1, "maxItems": 4,
+          "items": { "type": "object", "additionalProperties": false, "required": ["title", "text"], "properties": { "title": { "type": "string", "minLength": 1, "maxLength": 80 }, "text": { "type": "string", "minLength": 1, "maxLength": 600 } } }
+        }
+      }
+    },
+    "ack": { "type": "object", "additionalProperties": false, "required": ["revision", "deliveryNonce"], "properties": { "revision": { "type": "integer", "minimum": 1 }, "deliveryNonce": { "type": "string", "pattern": "^[a-f0-9]{64}$" } } }
+  },
+  "textValidation": "Names, labels, titles and text must be nonblank after trimming. Angle brackets and control characters except tab, CR and LF are rejected. No external media fields or executable markup.",
+  "routes": [
+    { "method": "GET", "path": "/api/health", "auth": "none", "success": 200, "returns": ["service", "version", "syntheticOnly"] },
+    { "method": "POST", "path": "/api/displays", "auth": "none, demo browser enrollment only", "requestSchema": "enroll", "success": 201, "returns": ["deviceId", "deviceToken", "pairing.sessionId", "pairing.code", "pairing.expiresAt", "pairing.used"] },
+    { "method": "POST", "path": "/api/owner/login", "auth": "owner credential in body", "requestSchema": "ownerLogin", "success": 200, "returns": ["csrfToken", "expiresAt"], "setsCookie": "demo_owner" },
+    { "method": "GET", "path": "/api/owner/state", "auth": "owner cookie", "success": 200, "returns": ["devices", "requests", "grants", "csrfToken", "sessionExpiresAt"], "secretsExcluded": ["deviceToken", "requestToken", "grantToken", "pairingCode"] },
+    { "method": "POST", "path": "/api/owner/logout", "auth": "owner cookie and CSRF", "body": {}, "success": 200, "returns": ["loggedOut"] },
+    { "method": "POST", "path": "/api/owner/claim", "auth": "owner cookie and CSRF", "requestSchema": "claim", "success": 200, "returns": ["deviceId", "name", "agentAccess"], "agentAccess": false },
+    { "method": "POST", "path": "/api/owner/requests/{requestId}/approve", "auth": "owning owner cookie and CSRF", "requestSchema": "approve", "success": 200, "returns": ["grantId", "deviceId", "scopes", "expiresAt"], "grantTokenReturned": false },
+    { "method": "POST", "path": "/api/owner/grants/{grantId}/revoke", "auth": "owning owner cookie and CSRF", "body": {}, "success": 200, "returns": ["revoked"] },
+    { "method": "GET", "path": "/api/devices/{deviceId}/poll", "auth": "device bearer for this device", "success": 200, "returns": ["deviceId", "name", "claimed", "serverTime", "revision", "pairing", "delivery"], "deliveryFields": ["revision", "cards", "expiresAt", "deliveryNonce"], "marksStatus": "downloaded, never rendered" },
+    { "method": "POST", "path": "/api/devices/{deviceId}/pairing", "auth": "device bearer for this unclaimed device", "body": {}, "success": 200, "returns": ["sessionId", "code", "expiresAt", "used"], "invalidatesPreviousPairing": true },
+    { "method": "POST", "path": "/api/devices/{deviceId}/ack", "auth": "device bearer and delivered nonce for current unexpired revision", "requestSchema": "ack", "success": 200, "returnsSchema": "revisionStatus", "duplicateBehavior": "idempotent receipt, original timestamp preserved" },
+    { "method": "POST", "path": "/api/agent/requests", "auth": "none, pending request for a claimed display only", "requestSchema": "agentRequest", "success": 201, "returns": ["requestId", "requestToken", "expiresAt", "status"], "initialStatus": "pending" },
+    { "method": "GET", "path": "/api/agent/requests/{requestId}", "auth": "request bearer for this request", "success": 200, "returns": ["status"], "approvedReturns": ["grantId", "grantToken", "deviceId", "scopes", "expiresAt"], "statuses": ["pending", "approved", "revoked", "expired"] },
+    { "method": "GET", "path": "/api/agent/devices/{deviceId}/capabilities", "auth": "grant bearer", "scope": "display:read", "success": 200, "returns": ["deviceId", "revision", "blocks", "maximumCards", "maximumTitleLength", "maximumTextLength", "scopes"] },
+    { "method": "POST", "path": "/api/agent/devices/{deviceId}/content", "auth": "grant bearer", "scope": "content:write", "requestSchema": "publish", "requiresHeader": "Idempotency-Key", "success": 200, "returnsSchema": "revisionStatus" },
+    { "method": "GET", "path": "/api/agent/devices/{deviceId}/revisions/{revision}", "auth": "grant bearer", "scope": "display:read", "success": 200, "returnsSchema": "revisionStatus" }
+  ],
+  "revisionStatus": { "fields": ["revision", "status", "acceptedAt", "downloadedAt", "renderedAt", "expiresAt"], "statuses": ["accepted", "downloaded", "rendered", "expired"], "timestamps": "UTC Unix milliseconds; downloadedAt and renderedAt are null until observed", "renderedMeaning": "Client-reported render receipt, not physical pixel attestation" },
+  "errors": { "shape": { "error": "human-readable bounded error" }, "statuses": { "400": "invalid payload, pairing mismatch, nonce mismatch or query parameters", "401": "missing, invalid, expired or revoked authority", "403": "wrong device or scope, CSRF, Host or Origin rejection", "404": "unknown route, device, grant, request or revision", "405": "unsupported method", "409": "used pairing, already-decided request, revision conflict, changed idempotent retry or stale ACK", "410": "expired pairing, request or content ACK", "413": "oversize payload", "415": "wrong content type", "429": "rate or demo memory limit", "500": "internal demo error" } }
+}

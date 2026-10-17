@@ -1,0 +1,30 @@
+{
+  "name": "displayos-cloud",
+  "version": "0.1.0",
+  "license": "AGPL-3.0-only",
+  "author": "Wearer Lab",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "dev": "npm run build && wrangler dev",
+    "test": "node --test test/*.test.js",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "playwright": "1.59.1",
+    "wrangler": "4.149.0"
+  },
+  "dependencies": {
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.0.3",
+    "jpeg-js": "0.4.4",
+    "pngjs": "7.0.0",
+    "qrcode-generator": "2.0.4"
+  },
+  "description": "DisplayOS cloud service: Cloudflare Worker, owner app and tablet screen."
+}
