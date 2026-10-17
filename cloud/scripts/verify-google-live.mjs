@@ -123,7 +123,8 @@ try {
   await display.locator('.family-tile').filter({ has: display.getByRole('heading', { name: 'Around town', exact: true }) }).getByText(localValue.nearby[0].title, { exact: false }).waitFor();
   check(await display.locator('.local-attribution').count() > 0, 'Real Google screen attribution is missing.');
   check(!/could not be loaded/.test(await display.locator('body').innerText()), 'Successful screen-local request still shows an error.');
-  await display.getByRole('button', { name: 'Back to quiet hours', exact: true }).click();
+  await display.getByRole('button', { name: 'Settings' }).click();
+  await display.getByRole('button', { name: 'Back to quiet hours' }).click();
   check(await display.locator('.local-attribution,.local-forecast').count() === 0, 'Returning to quiet hours leaves real Google information visible.');
   screenVerified = true;
   phase = 'export';
