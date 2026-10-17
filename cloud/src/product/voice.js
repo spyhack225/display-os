@@ -1,7 +1,7 @@
 const ID_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 const TRANSCRIBE_URL = 'https://api.openai.com/v1/audio/transcriptions';
 const TRANSCRIBE_MODEL = 'gpt-4o-transcribe';
-const WORKERS_MODEL = '@cf/openai/whisper-large-v3-turbo';
+const WORKERS_MODEL = '@cf/openai/whisper-tiny-en';
 const SCENE_TTL_SECONDS = 600;
 
 function freshId() {
@@ -94,7 +94,8 @@ export async function transcribeVoice(bytes, mime, env, fetchImpl = globalThis.f
       return typeof value === 'string' ? value.trim() || null : null;
     }
     return null;
-  } catch {
+  } catch (error) {
+    try { console.error(JSON.stringify({ event: 'displayos_voice_transcribe_failed', message: String((error && error.message) || error).slice(0, 200) })); } catch { /* diagnostics must never break the flow */ }
     return null;
   }
 }

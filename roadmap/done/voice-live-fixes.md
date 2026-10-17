@@ -94,3 +94,24 @@ screen but saw no `family_publish` tool, so it could not send anything.
 - owner: reconnect the ChatGPT plugin keeping `display:read` and `content:write` selected and
   both approval checkboxes checked; the assistant then sees `family_publish` and
   `voice_reply`. An existing read-only grant cannot be expanded and refresh cannot add scopes.
+
+## Follow-up: transcription contract (2026-10-17, same day)
+
+The two live recordings uploaded after the release (18:49 and 19:05 in
+diagnostics/voice-tail3.jsonl) reached the connected assistant through `voice_list` without
+transcripts. The binding call `env.AI.run('@cf/openai/whisper-large-v3-turbo', { audio:
+[...bytes] })` never worked on live Workers AI: that model's input schema accepts base64 audio
+(or a `{body, contentType}` object), so every call was rejected and swallowed by the
+function's silent error path; messages stayed `received`.
+
+A real Workers AI check through `wrangler dev` (the deployed account, a scratch local Worker)
+on a genuine Chromium `audio/webm;codecs=opus` recording (Windows TTS speech captured through
+the same MediaRecorder path the kiosk page uses) proved the contracts: turbo + bytes rejected;
+turbo + base64 transcribed (about 5 s); tiny-en + bytes transcribed (about 1 s); tiny-en +
+base64 rejected. The Worker now calls `@cf/openai/whisper-tiny-en` (English-only) with its
+8-bit byte array input, a bounded `displayos_voice_transcribe_failed` console event covers
+future failures, and the unit test locks the tiny-en byte-array call
+(cloud/test/product-voice-interpret.test.js). Version
+`48d9649d-677f-4c59-9faa-210248828631` passed the complete release gates (unit 398, workerd
+393, provider-race 1,130, browser 275, live HTTPS 861). The owner's own spoken message read
+back through the connected assistant remains the acceptance check.

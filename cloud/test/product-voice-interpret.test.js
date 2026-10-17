@@ -335,7 +335,8 @@ test('transcribeVoice falls back to the workers AI binding', async () => {
   const env = { AI: { run: async (model, input) => { calls.push({ model, input }); return { text: 'from the binding' }; } } };
   const result = await transcribeVoice(new Uint8Array([1, 2]), 'audio/webm', env);
   assert.equal(result, 'from the binding');
-  assert.equal(calls[0].model, '@cf/openai/whisper-large-v3-turbo');
+  assert.equal(calls[0].model, '@cf/openai/whisper-tiny-en');
+  assert.ok(Array.isArray(calls[0].input.audio));
   assert.deepEqual(calls[0].input.audio, [1, 2]);
   const failing = { AI: { run: async () => { throw new Error('nope'); } } };
   assert.equal(await transcribeVoice(new Uint8Array([1]), 'audio/webm', failing), null);

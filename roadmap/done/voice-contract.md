@@ -79,7 +79,10 @@ Rate limit `device:voice:{id}` at 30 per 60s. `byteLength` must be integer 1..26
 - If `env.VOICE_API_KEY` set: POST multipart to `https://api.openai.com/v1/audio/transcriptions`
   with model `gpt-4o-transcribe`, `response_format: 'json'`, file name `clip.webm`,
   content type `audio/webm`. Do not set Content-Type yourself.
-- Else if `env.AI` bound: `env.AI.run('@cf/openai/whisper-large-v3-turbo', { audio: [...bytes] })`.
+- Else if `env.AI` bound: `env.AI.run('@cf/openai/whisper-tiny-en', { audio: [...bytes] })`.
+  Corrected 2026-10-17 (see voice-live-fixes.md follow-up): the original turbo call rejects the
+  byte array on live Workers AI — turbo takes base64 — so every live transcription failed
+  silently. tiny-en takes the 8-bit byte array or raw binary.
 - Else return null.
 
 `interpretVoice(text, currentSnapshot)` -> `{ displayScene, listEdit? }` deterministic,
