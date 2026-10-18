@@ -113,4 +113,10 @@ base64 rejected. The Worker now calls `@cf/openai/whisper-tiny-en` (English-only
 future failures, and the unit test locks the tiny-en byte-array call
 (cloud/test/product-voice-interpret.test.js). Version
 `48d9649d-677f-4c59-9faa-210248828631` passed the complete release gates (unit 398, workerd
-393, provider-race 1,130, browser 275, live HTTPS 861). The acceptance check passed on 2026-10-17: the owner's press-and-hold on the tablet produced `begin` + 8 parts + `end`, all HTTP 200 on version `48d9649d` in the live `wrangler tail` (`diagnostics/voice-tail4.jsonl`), and the tail showed no `displayos_voice_transcribe_failed` event; the connected assistant listed the recordings with transcripts, including recordings that had stayed silent before the fix. Pre-fix recordings have no server-side transcript (transcription runs once, on `voice.end`); the assistant recovers them by listening to the audio through `voice_get`.
+393, provider-race 1,130, browser 275, live HTTPS 861). The acceptance check passed on
+2026-10-17: the owner's press-and-hold on the tablet produced `begin` + 8 parts + `end`, all
+HTTP 200 on version `48d9649d` in the live `wrangler tail` (`diagnostics/voice-tail4.jsonl`),
+and the tail showed no `displayos_voice_transcribe_failed` event; the connected assistant
+listed the recordings with transcripts, including recordings that had stayed silent before
+the fix. Pre-fix recordings have no server-side transcript (transcription runs once, on
+`voice.end`); the assistant recovers them by listening to the audio through `voice_get`.
